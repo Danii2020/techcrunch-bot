@@ -18,17 +18,15 @@ TWILIO_PHONE_NUMBER = "whatsapp:+14155238886"
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 message_sid = ''
 
-@app.route('/bot', methods=['POST'])
+@app.route('/bot', methods=['GET'])
 def bot():
     try:
-        data = request.json
-        to_number = data.get('to_number')  # número de destino en formato 'whatsapp:+[country_code][number]'
+        to_number = request.args.get("toNumber", os.getenv("TO_NUMBER"))
         summary_messages = get_summary_messages()
 
-        if not to_number or not data:
+        if not to_number:
             return jsonify({"error": "to_number and message fields are required"}), 400
 
-        # Envía el mensaje a través de la API de Twilio
         for message in summary_messages:
             message = client.messages.create(
                 from_=TWILIO_PHONE_NUMBER,
