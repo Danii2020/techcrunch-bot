@@ -1,24 +1,17 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
-
 BASE_URL = 'https://www.techcrunch.com'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
 }
-
-
-
 def load_bs_object(url):
     response = requests.get(url, headers=HEADERS)
     return BeautifulSoup(response.text, 'html.parser')
-
 def scrape_posts_links():
     soup = load_bs_object(BASE_URL)
     posts_headers = soup.find_all('h3', attrs={"class": "loop-card__title"})
     return [element.find('a')['href'] for element in posts_headers][:10]
-
-
 def scrape_posts_content():
     posts_list = []
     posts_links = scrape_posts_links()
@@ -37,6 +30,3 @@ def scrape_posts_content():
             print(f"Error: {e}")
             continue
     return posts_list
-
-# posts_df = pd.DataFrame(posts_list)
-# posts_df.to_csv('posts.csv', index=False)
